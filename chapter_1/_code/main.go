@@ -114,29 +114,33 @@ const (
 
 // AmountFor 计算价格
 func (r *Rental) AmountFor() (thisAmount float32) {
-	switch r.Movie.PriceCode {
-	case Children:
-		thisAmount += 2
-		if r.DaysRented > 2 {
-			thisAmount += float32(r.DaysRented-2) * 1.5
-		}
-	case Regular:
-		thisAmount += float32(r.DaysRented) * 3
-	case NewRelease:
-		thisAmount += 1.5
-		if r.DaysRented > 3 {
-			thisAmount += float32(r.DaysRented-3) * 1.5
-		}
-	default:
-		log.Printf("error: not find MovieType%v", r.Movie.PriceCode)
-	}
-	return
+	return r.Movie.Amount(r.DaysRented)
 }
 
 func (r *Rental) CalcPoints() (points int) {
 	points++
 	if r.Movie.PriceCode == NewRelease && r.DaysRented > 1 {
 		points++
+	}
+	return
+}
+
+func (m *Movie) Amount(days int) (thisAmount float32) {
+	switch m.PriceCode {
+	case Children:
+		thisAmount += 2
+		if days > 2 {
+			thisAmount += float32(days-2) * 1.5
+		}
+	case Regular:
+		thisAmount += float32(days) * 3
+	case NewRelease:
+		thisAmount += 1.5
+		if days > 3 {
+			thisAmount += float32(days-3) * 1.5
+		}
+	default:
+		log.Printf("error: not find MovieType%v", m.PriceCode)
 	}
 	return
 }
