@@ -68,9 +68,6 @@ func (c *Customer) Statement() string {
 	expression += "Rental Record for " + c.Name + "\n"
 
 	for _, r := range c.Rentals {
-		// 计算单价
-		var thisAmount = r.AmountFor()
-
 		// 计算积分
 		points++
 		if r.Movie.PriceCode == NewRelease && r.DaysRented > 1 {
@@ -78,10 +75,10 @@ func (c *Customer) Statement() string {
 		}
 
 		// 增加用户描述
-		expression += "\t" + r.Movie.Title + "\t" + strconv.Itoa(int(thisAmount)) + "\n"
+		expression += "\t" + r.Movie.Title + "\t" + strconv.Itoa(int(r.AmountFor())) + "\n"
 
 		// 计算总价
-		totalAmount += int(thisAmount)
+		totalAmount += int(r.AmountFor())
 	}
 
 	// 总结
