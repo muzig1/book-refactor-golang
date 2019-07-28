@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"strconv"
 )
@@ -14,18 +13,20 @@ func main() {
 	// 构造电影
 	var (
 		Names = []string{"Roman", "Cat", "Hacker"}
-		typs  = []MovieType{NewRelease, Children, Regular}
 	)
-	for i, name := range Names {
-		m := NewMovie(name, typs[i])
-		cus.AddRental(NewRental(m, int(rand.Int31n(10)+1)))
-	}
+	m1 := NewNewRelease(Names[0])
+	m2 := NewChildrenMovie(Names[1])
+	m3 := NewRegular(Names[2])
+	cus.AddRental(NewRental(m1, int(rand.Int31n(10)+1)))
+	cus.AddRental(NewRental(m2, int(rand.Int31n(10)+1)))
+	cus.AddRental(NewRental(m3, int(rand.Int31n(10)+1)))
 
 	// 输出信息
 	fmt.Println(cus.Statement())
 }
 
-// NewCustomer .
+// --------- 构造区域 ---------
+
 func NewCustomer(name string) *Customer {
 	return &Customer{
 		Name:    name,
@@ -33,19 +34,39 @@ func NewCustomer(name string) *Customer {
 	}
 }
 
-func NewRental(mov *Movie, days int) *Rental {
+func NewRental(mov IMovie, days int) *Rental {
 	return &Rental{
 		Movie:      mov,
 		DaysRented: days,
 	}
 }
 
-func NewMovie(title string, passCode MovieType) *Movie {
+func NewChildrenMovie(title string) IMovie {
+	return &ChildrenMovie{
+		Movie: newMovie(title, Children),
+	}
+}
+
+func NewRegular(title string) IMovie {
+	return &RegularMovie{
+		Movie: newMovie(title, Regular),
+	}
+}
+
+func NewNewRelease(title string) IMovie {
+	return &NewReleaseMovie{
+		Movie: newMovie(title, NewRelease),
+	}
+}
+
+func newMovie(title string, passCode MovieType) *Movie {
 	return &Movie{
 		Title:     title,
 		PriceCode: passCode,
 	}
 }
+
+// --------- 用户 ---------
 
 // Customer .
 type Customer struct {
@@ -67,7 +88,7 @@ func (c *Customer) Statement() string {
 
 	for _, r := range c.Rentals {
 		// 增加用户描述
-		expression += "\t" + r.Movie.Title + "\t" + strconv.Itoa(int(r.AmountFor())) + "\n"
+		expression += "\t" + r.Movie.GetTitle() + "\t" + strconv.Itoa(int(r.AmountFor())) + "\n"
 	}
 
 	// 总结
@@ -90,21 +111,66 @@ func (c *Customer) GetPoints() (points int) {
 	return
 }
 
+// --------- 数据层 ---------
+
 type (
 	// Rental .
 	Rental struct {
-		Movie      *Movie
+		Movie      IMovie
 		DaysRented int
 	}
 
 	MovieType uint
+
+	IMovie interface {
+		GetTitle() string
+		GetPriceCode() MovieType
+		Amount(int) float32
+		Points(int) int
+	}
 
 	// Movie .
 	Movie struct {
 		Title     string
 		PriceCode MovieType
 	}
+
+	ChildrenMovie struct {
+		*Movie
+	}
+
+	RegularMovie struct {
+		*Movie
+	}
+
+	NewReleaseMovie struct {
+		*Movie
+	}
 )
+
+func (nm *NewReleaseMovie) GetTitle() string {
+	return nm.Title
+}
+
+func (nm *NewReleaseMovie) GetPriceCode() MovieType {
+	return nm.PriceCode
+}
+
+func (rm *RegularMovie) GetTitle() string {
+	return rm.Title
+}
+
+func (rm *RegularMovie) GetPriceCode() MovieType {
+	return rm.PriceCode
+}
+
+func (cm *ChildrenMovie) GetTitle() string {
+	return cm.Title
+}
+
+func (cm *ChildrenMovie) GetPriceCode() MovieType {
+	return cm.PriceCode
+}
 
 const (
 	Children MovieType = iota + 1
@@ -121,22 +187,23 @@ func (r *Rental) CalcPoints() (points int) {
 	return r.Movie.Points(r.DaysRented)
 }
 
-func (m *Movie) Amount(days int) (thisAmount float32) {
-	switch m.PriceCode {
-	case Children:
-		thisAmount += 2
-		if days > 2 {
-			thisAmount += float32(days-2) * 1.5
-		}
-	case Regular:
-		thisAmount += float32(days) * 3
-	case NewRelease:
-		thisAmount += 1.5
-		if days > 3 {
-			thisAmount += float32(days-3) * 1.5
-		}
-	default:
-		log.Printf("error: not find MovieType%v", m.PriceCode)
+func (cm *ChildrenMovie) Amount(days int) (thisAmount float32) {
+	thisAmount += 2
+	if days > 2 {
+		thisAmount += float32(days-2) * 1.5
+	}
+	return
+}
+
+func (cm *RegularMovie) Amount(days int) (thisAmount float32) {
+	thisAmount += float32(days) * 3
+	return
+}
+
+func (cm *NewReleaseMovie) Amount(days int) (thisAmount float32) {
+	thisAmount += 1.5
+	if days > 3 {
+		thisAmount += float32(days-3) * 1.5
 	}
 	return
 }
