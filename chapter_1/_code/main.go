@@ -69,10 +69,7 @@ func (c *Customer) Statement() string {
 
 	for _, r := range c.Rentals {
 		// 计算积分
-		points++
-		if r.Movie.PriceCode == NewRelease && r.DaysRented > 1 {
-			points++
-		}
+		points += r.CalcPoints()
 
 		// 增加用户描述
 		expression += "\t" + r.Movie.Title + "\t" + strconv.Itoa(int(r.AmountFor())) + "\n"
@@ -126,6 +123,14 @@ func (r *Rental) AmountFor() (thisAmount float32) {
 		}
 	default:
 		log.Printf("error: not find MovieType%v", r.Movie.PriceCode)
+	}
+	return
+}
+
+func (r *Rental) CalcPoints() (points int) {
+	points++
+	if r.Movie.PriceCode == NewRelease && r.DaysRented > 1 {
+		points++
 	}
 	return
 }
