@@ -61,9 +61,8 @@ func (c *Customer) AddRental(rental *Rental) {
 // Statement .
 func (c *Customer) Statement() string {
 	var (
-		totalAmount int    // 总价
-		points      int    // 积分
-		expression  string // 顾客描述信息
+		points     int    // 积分
+		expression string // 顾客描述信息
 	)
 	expression += "Rental Record for " + c.Name + "\n"
 
@@ -73,15 +72,19 @@ func (c *Customer) Statement() string {
 
 		// 增加用户描述
 		expression += "\t" + r.Movie.Title + "\t" + strconv.Itoa(int(r.AmountFor())) + "\n"
-
-		// 计算总价
-		totalAmount += int(r.AmountFor())
 	}
 
 	// 总结
-	expression += "Amount owed is " + strconv.Itoa(totalAmount) + "\n"
+	expression += "Amount owed is " + strconv.Itoa(c.GetTotalAmount()) + "\n"
 	expression += "You earned " + strconv.Itoa(points) + " frequent renter points"
 	return expression
+}
+
+func (c *Customer) GetTotalAmount() (totalAmount int) {
+	for _, r := range c.Rentals {
+		totalAmount += int(r.AmountFor())
+	}
+	return
 }
 
 type (
