@@ -118,11 +118,7 @@ func (r *Rental) AmountFor() (thisAmount float32) {
 }
 
 func (r *Rental) CalcPoints() (points int) {
-	points++
-	if r.Movie.PriceCode == NewRelease && r.DaysRented > 1 {
-		points++
-	}
-	return
+	return r.Movie.Points(r.DaysRented)
 }
 
 func (m *Movie) Amount(days int) (thisAmount float32) {
@@ -143,4 +139,12 @@ func (m *Movie) Amount(days int) (thisAmount float32) {
 		log.Printf("error: not find MovieType%v", m.PriceCode)
 	}
 	return
+}
+
+func (m *Movie) Points(days int) (points int) {
+	if m.PriceCode == NewRelease && days > 1 {
+		return 2
+	} else {
+		return 1
+	}
 }
