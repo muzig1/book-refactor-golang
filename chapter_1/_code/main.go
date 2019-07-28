@@ -69,23 +69,7 @@ func (c *Customer) Statement() string {
 
 	for _, r := range c.Rentals {
 		// 计算单价
-		var thisAmount float32
-		switch r.Movie.PriceCode {
-		case Children:
-			thisAmount += 2
-			if r.DaysRented > 2 {
-				thisAmount += float32(r.DaysRented-2) * 1.5
-			}
-		case Regular:
-			thisAmount += float32(r.DaysRented) * 3
-		case NewRelease:
-			thisAmount += 1.5
-			if r.DaysRented > 3 {
-				thisAmount += float32(r.DaysRented-3) * 1.5
-			}
-		default:
-			log.Printf("error: not find MovieType%v", r.Movie.PriceCode)
-		}
+		var thisAmount = c.AmountFor(r)
 
 		// 计算积分
 		points++
@@ -104,6 +88,26 @@ func (c *Customer) Statement() string {
 	expression += "Amount owed is " + strconv.Itoa(totalAmount) + "\n"
 	expression += "You earned " + strconv.Itoa(points) + " frequent renter points"
 	return expression
+}
+
+func (c *Customer) AmountFor(r *Rental) (thisAmount float32) {
+	switch r.Movie.PriceCode {
+	case Children:
+		thisAmount += 2
+		if r.DaysRented > 2 {
+			thisAmount += float32(r.DaysRented-2) * 1.5
+		}
+	case Regular:
+		thisAmount += float32(r.DaysRented) * 3
+	case NewRelease:
+		thisAmount += 1.5
+		if r.DaysRented > 3 {
+			thisAmount += float32(r.DaysRented-3) * 1.5
+		}
+	default:
+		log.Printf("error: not find MovieType%v", r.Movie.PriceCode)
+	}
+	return
 }
 
 type (
