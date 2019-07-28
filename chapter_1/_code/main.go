@@ -61,28 +61,31 @@ func (c *Customer) AddRental(rental *Rental) {
 // Statement .
 func (c *Customer) Statement() string {
 	var (
-		points     int    // 积分
 		expression string // 顾客描述信息
 	)
 	expression += "Rental Record for " + c.Name + "\n"
 
 	for _, r := range c.Rentals {
-		// 计算积分
-		points += r.CalcPoints()
-
 		// 增加用户描述
 		expression += "\t" + r.Movie.Title + "\t" + strconv.Itoa(int(r.AmountFor())) + "\n"
 	}
 
 	// 总结
 	expression += "Amount owed is " + strconv.Itoa(c.GetTotalAmount()) + "\n"
-	expression += "You earned " + strconv.Itoa(points) + " frequent renter points"
+	expression += "You earned " + strconv.Itoa(c.GetPoints()) + " frequent renter points"
 	return expression
 }
 
 func (c *Customer) GetTotalAmount() (totalAmount int) {
 	for _, r := range c.Rentals {
 		totalAmount += int(r.AmountFor())
+	}
+	return
+}
+
+func (c *Customer) GetPoints() (points int) {
+	for _, r := range c.Rentals {
+		points += r.CalcPoints()
 	}
 	return
 }
