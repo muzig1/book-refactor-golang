@@ -24,7 +24,7 @@ git clone https://github.com/nxlsBoy/book-refactor-golang.git
 
 - [x] master
 - [x] chapter_1:2019年07月30日00:16:14
-- [] chapter_2
+- [x] chapter_2:2019年07月31日22:25:34
 - [] chapter_3
 - [] chapter_4
 - [] chapter_5
