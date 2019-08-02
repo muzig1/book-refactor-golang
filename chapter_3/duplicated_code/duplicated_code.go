@@ -10,112 +10,61 @@ package main
 */
 
 func main() {
-	// 购买香烟
-	OnShoppingReq(&Adult{
-		Name:   "xiaoming",
-		Age:    18,
-		Cash:   100,
-		Pocket: make([]*Cigarette, 0),
-	}, Panda)
 }
 
-// ------ Bad Code >>>>>>
-// Module:
-// 概述：一个小卖部，销售香烟，只能销售给18岁以上的成年人
-// 对象：小卖部(Shop), 香烟(Cigarette), 成年人(Adult)
-type CigaretteType uint8 // 香烟类型
+// ------ Not Good Code >>>>>>
+type fruitSet []*fruit
 
-const (
-	Creature CigaretteType = iota // 娇子
-	Panda                         // 熊猫
-)
+type fruit struct {
+	SN   int32
+	Name string
+}
 
-type (
-	// Shop 小卖部
-	Shop struct {
-		CigSet []*Cigarette // 香烟集
-	}
-
-	// Cigarette 香烟
-	Cigarette struct {
-		Type  CigaretteType
-		Price int // 价格
-	}
-
-	// Adult 成年人
-	Adult struct {
-		Name string // 姓名
-		Age  uint8  // 年龄
-		Cash int    // 现金
-
-		Pocket []*Cigarette // 装香烟的口袋
-	}
-)
-
-// Shopping 购买香烟
-func (s *Shop) Shopping(adult *Adult, cigaretteType CigaretteType) (sell *Cigarette) {
-	if !(adult.Age >= 18) {
-		return
-	}
-	for _, cig := range s.CigSet {
-		if cig.Type == cigaretteType {
-			sell = cig
+// GetFruit 根据水果名获取水果
+func (set fruitSet) GetFruit(name string) *fruit {
+	for _, f := range set {
+		if f.Name == name {
+			return f
 		}
 	}
-	if sell == nil {
-		return
-	}
-	if adult.Cash < sell.Price {
-		return nil
-	}
-	return
+	return nil
 }
 
-// Controller:
-var ShopInstance = &Shop{[]*Cigarette{
-	{
-		Type:  Panda,
-		Price: 10,
-	},
-	{
-		Type:  Creature,
-		Price: 20,
-	},
-}}
-
-// OnShoppingReq 购物请求
-func OnShoppingReq(adult *Adult, cigaretteType CigaretteType) {
-	// 检查
-	if !(adult.Age >= 18) {
-		return
-	}
-	var cigarette *Cigarette
-	for _, cig := range ShopInstance.CigSet {
-		if cig.Type == cigaretteType {
-			cigarette = cig
+// GetFruit2 根据水果sn 码获取水果
+func (set fruitSet) GetFruit2(sn int32) *fruit {
+	for _, f := range set {
+		if f.SN == sn {
+			return f
 		}
 	}
-	if cigarette == nil {
-		return
-	}
-	if adult.Cash < cigarette.Price {
-		return
-	}
-
-	// 执行
-	adult.Pocket = append(adult.Pocket, ShopInstance.Shopping(adult, cigaretteType))
+	return nil
 }
 
-// ------ Bad Code >>>>>>
+// ------ Not Good Code <<<<<<
 
 // ------ Extract Method >>>>>>
+// 优化目标：提炼函数，提炼for 循环
+
+// getFruit 将函数穿入，类似于函数式编程，抽出共同的for 循环
+func (set fruitSet) getFruit(selector func(f *fruit) (match bool)) *fruit {
+	for _, f := range set {
+		if selector(f) {
+			return f
+		}
+	}
+	return nil
+}
+
+// GetFruitByName 可以动态定制函数传入， 不用再编写for 循环
+func (set fruitSet) GetFruitByName(name string) *fruit {
+	return set.getFruit(func(f *fruit) (match bool) {
+		if f.Name == name {
+			match = true
+		}
+		return
+	})
+}
 
 // ------ Extract Method <<<<<<
 
-// ------ Pull Up Method >>>>>>
-
-// ------ Pull Up Method <<<<<<
-
-// ------ Extract Class >>>>>>
-
-// ------ Extract Class <<<<<<
+// ------------------------------------------------------------------------
