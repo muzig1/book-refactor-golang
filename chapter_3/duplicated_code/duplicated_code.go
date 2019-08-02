@@ -68,3 +68,115 @@ func (set fruitSet) GetFruitByName(name string) *fruit {
 // ------ Extract Method <<<<<<
 
 // ------------------------------------------------------------------------
+
+// ------ Not Good Code >>>>>>
+// Module --->>>
+// medal 奖章
+type medal struct {
+	CfgID int32
+	Name  string
+	Level int32
+}
+
+func (m *medal) LevelUp() {
+	// 获取配置表信息
+	cfg := GetMedalCfg(m.CfgID)
+	if cfg == nil {
+		return
+	}
+	// 约束检查
+	if m.Level < cfg.MaxLvl {
+		m.Level++
+	}
+}
+
+func (m *medal) LevelDown() {
+	// 获取配置表信息
+	cfg := GetMedalCfg(m.CfgID)
+	if cfg == nil {
+		return
+	}
+	// 约束检查
+	if m.Level != 0 {
+		m.Level--
+	}
+}
+
+var MedalCfgs = []*MedalCfg{
+	{
+		CfgID:  1,
+		MaxLvl: 10,
+	},
+}
+
+type MedalCfg struct {
+	CfgID  int32 `bson:"cfg_id"`  // 配置ID
+	MaxLvl int32 `bson:"max_lvl"` // 最大等级 - 用于检查
+}
+
+func GetMedalCfg(cfgID int32) *MedalCfg {
+	for _, cfg := range MedalCfgs {
+		if cfg.CfgID == cfgID {
+			return cfg
+		}
+	}
+	return nil
+}
+
+// Controller --->>>
+func DoMedalLevelUp() {
+	m := &medal{
+		CfgID: 1,
+		Name:  "medal",
+		Level: 5,
+	}
+	// 此处一下调用，其实会调用同样的代码，也就是**配置获取** - 我们需要优化一下
+	m.LevelUp()
+	m.LevelDown()
+}
+
+// ------ Not Good Code <<<<<<
+
+// ------ Pull Up Method >>>>>>
+func (m *medal) newLevelUp(cfg *MedalCfg) {
+	// 约束检查
+	if m.Level < cfg.MaxLvl {
+		m.Level++
+	}
+}
+
+func (m *medal) newLevelDown(cfg *MedalCfg) {
+	// 约束检查
+	if m.Level != 0 {
+		m.Level--
+	}
+}
+
+// Controller --->>>
+func newDoMedalLevelUp() {
+	m := &medal{
+		CfgID: 1,
+		Name:  "medal",
+		Level: 5,
+	}
+
+	// 优化后，采用传参的方式， 提升了函数的权限
+	cfg := GetMedalCfg(m.CfgID)
+	if cfg == nil {
+		return
+	}
+	m.newLevelUp(cfg)
+	m.newLevelDown(cfg)
+}
+
+// ------ Pull Up Method <<<<<<
+
+// ------------------------------------------------------------------------
+
+// ------ Not Good Code >>>>>>
+
+// ------ Not Good Code <<<<<<
+
+// ------ Extract Class >>>>>>
+
+// ------ Extract Class <<<<<<
