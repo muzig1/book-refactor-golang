@@ -1,5 +1,7 @@
 package main
 
+import "math/rand"
+
 /*
 问题：Duplicated Code - 重复代码
 
@@ -174,9 +176,72 @@ func newDoMedalLevelUp() {
 // ------------------------------------------------------------------------
 
 // ------ Not Good Code >>>>>>
+// 来源：工厂加工添加各类包的颜色
+const (
+	Red uint8 = iota
+	Blue
+)
+
+type bag struct {
+	Color uint8
+}
+
+func (b *bag) set(color uint8) {
+	b.Color = color
+}
+
+type bale struct {
+	Color uint8
+}
+
+func (b *bale) set(color uint8) {
+	b.Color = color
+}
+
+type factory struct {
+	Name string
+}
+
+func (f *factory) coloring() uint8 {
+	if rand.Int31n(1) == 0 {
+		return Red
+	}
+	return Blue
+}
+
+// Controller --->>>
+func DoColoring() {
+	f := &factory{Name: "gaga"}
+	// 外部返回颜色
+	color := f.coloring()
+	b1 := new(bag)
+	b2 := new(bale)
+	// 外部对象进行处理
+	b1.set(color)
+	b2.set(color)
+}
 
 // ------ Not Good Code <<<<<<
 
 // ------ Extract Class >>>>>>
+func (f *factory) newColoring(b1 *bag, b2 *bale) (color uint8) {
+	if rand.Int31n(1) == 0 {
+		color = Red
+	} else {
+		color = Blue
+	}
+	b1.set(color)
+	b2.set(color)
+
+	return
+}
+
+func newDoColoring() {
+	f := &factory{Name: "gaga"}
+	b1 := new(bag)
+	b2 := new(bale)
+	// 外部返回颜色 - 统一在一个类内部进行处理
+	_ = f.newColoring(b1, b2)
+}
 
 // ------ Extract Class <<<<<<
