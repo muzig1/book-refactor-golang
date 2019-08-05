@@ -102,8 +102,8 @@ func OnUseItemReq(p *Player, req *UseItemReq) (err error) {
 // ------ Extract Code --->>>
 
 var ItemUsings = map[ItemCategory]IItemUsing{
-	ICAddExp: &AddExp{},
-	ICAddRss: &AddRss{},
+	ICAddExp: &AddExp{&ItemUsing{}},
+	ICAddRss: &AddRss{&ItemUsing{}},
 }
 
 func newOnUseItemReq(p *Player, req *UseItemReq) (err error) {
@@ -141,6 +141,10 @@ type ItemUsing struct {
 	item Tuple
 }
 
+func (i *ItemUsing) Init(item Tuple) {
+	i.item = item
+}
+
 func (i *ItemUsing) CheckBeforeUsing() (err error) {
 	// 让组合的子类，必须覆盖该方法，否则就panic
 	panic("must cover me")
@@ -155,10 +159,6 @@ type AddExp struct {
 	*ItemUsing
 }
 
-func (a *AddExp) Init(item Tuple) {
-	a.ItemUsing = newItemUsing(item)
-}
-
 func (a *AddExp) CheckBeforeUsing() (err error) {
 	// 预检查，配置检查之类的
 	// 此处简化，直接返回
@@ -171,10 +171,6 @@ func (a *AddExp) Using(p *Player) {
 
 type AddRss struct {
 	*ItemUsing
-}
-
-func (a *AddRss) Init(item Tuple) {
-	a.ItemUsing = newItemUsing(item)
 }
 
 func (a *AddRss) CheckBeforeUsing() (err error) {
