@@ -41,6 +41,10 @@ func main() {
 	// 优化前：
 	_ = OnUseItemReq(p, item)
 	fmt.Println(p.ToString())
+
+	// 优化后：
+	_ = newOnUseItemReq(p2, item)
+	fmt.Println(p2.ToString())
 }
 
 // ItemCategory 道具类型
@@ -94,3 +98,93 @@ func OnUseItemReq(p *Player, req *UseItemReq) (err error) {
 }
 
 // ------ Not Good Code ---<<<
+
+// ------ Extract Code --->>>
+
+var ItemUsings = map[ItemCategory]IItemUsing{
+	ICAddExp: &AddExp{},
+	ICAddRss: &AddRss{},
+}
+
+func newOnUseItemReq(p *Player, req *UseItemReq) (err error) {
+	// 使用接口的方式，抽象道具使用方式 - 将函数通用性提高,但同时代码数量会增多
+	if using, ok := ItemUsings[ItemCategory(req.item.Typ)]; ok {
+		// 初始化字段
+		using.Init(req.item)
+
+		// 调用接口函数
+		err = using.CheckBeforeUsing()
+		if err != nil {
+			return
+		}
+
+		// 执行操作
+		using.Using(p)
+	}
+	err = fmt.Errorf("error: OnUseItemReq item typ is not match, playerID:%d itemTyp:%d", p.ID, req.item.Typ)
+	return
+}
+
+// IItemUsing 道具使用 - 接口命名一般为形容词后缀，描述一种行为
+type IItemUsing interface {
+	Init(item Tuple)               // 初始化值
+	CheckBeforeUsing() (err error) // 使用之前的所有检查
+	Using(p *Player)               // 使用道具
+}
+
+func newItemUsing(item Tuple) *ItemUsing {
+	return &ItemUsing{item: item}
+}
+
+// ItemUsing 道具使用基类
+type ItemUsing struct {
+	item Tuple
+}
+
+func (i *ItemUsing) CheckBeforeUsing() (err error) {
+	// 让组合的子类，必须覆盖该方法，否则就panic
+	panic("must cover me")
+}
+
+func (i *ItemUsing) Using(p *Player) {
+	// 让组合的子类，必须覆盖该方法, 否则就panic
+	panic("must cover me")
+}
+
+type AddExp struct {
+	*ItemUsing
+}
+
+func (a *AddExp) Init(item Tuple) {
+	a.ItemUsing = newItemUsing(item)
+}
+
+func (a *AddExp) CheckBeforeUsing() (err error) {
+	// 预检查，配置检查之类的
+	// 此处简化，直接返回
+	return
+}
+
+func (a *AddExp) Using(p *Player) {
+	p.Exp += a.item.Val
+}
+
+type AddRss struct {
+	*ItemUsing
+}
+
+func (a *AddRss) Init(item Tuple) {
+	a.ItemUsing = newItemUsing(item)
+}
+
+func (a *AddRss) CheckBeforeUsing() (err error) {
+	// 预检查，配置检查之类的
+	// 此处简化，直接返回
+	return
+}
+
+func (a *AddRss) Using(p *Player) {
+	p.Rss += a.item.Val
+}
+
+// ------ Extract Code ---<<<
