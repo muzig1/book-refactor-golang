@@ -10,3 +10,6 @@
     - Introduce Parameter Object | Preserve Whole Object
     - Replace Method with Method Object
     - Decompose Conditional
+- Large Class - 过大的类
+    - Extract Method
+    - Extract Class | Extract Subclass
