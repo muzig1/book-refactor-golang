@@ -58,3 +58,40 @@ func printBanner() {
 }
 
 // 情景一：无变量的情况 ---<<<
+
+// 情景二：有变量的情况 --->>>
+func printDemo() {
+	var sum int
+
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+
+	fmt.Println("start")
+	fmt.Println("sum: ", sum)
+	fmt.Println("end")
+}
+
+// 优化后：
+func _printDemo() {
+	var sum int
+
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+
+	printDetail(sum)
+}
+
+func printDetail(sum int) {
+	fmt.Println("start")
+	fmt.Println("sum: ", sum)
+	fmt.Println("end")
+}
+
+// 情景二：有变量的情况 ---<<<
+
+// 情景三：对局部变量再赋值的情况 --->>>
+
+// 优化后：
+// 情景三：对局部变量再赋值的情况 ---<<<
