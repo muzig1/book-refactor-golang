@@ -90,8 +90,27 @@ func printDetail(sum int) {
 }
 
 // 情景二：有变量的情况 ---<<<
-
 // 情景三：对局部变量再赋值的情况 --->>>
+func printDemo2() {
+	var sum int
+
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+
+	printDetail(sum)
+}
 
 // 优化后：
+func _printDemo2() {
+	printDetail(getSum())
+}
+
+func getSum() (sum int) {
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+	return
+}
+
 // 情景三：对局部变量再赋值的情况 ---<<<
