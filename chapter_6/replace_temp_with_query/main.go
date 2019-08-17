@@ -34,6 +34,38 @@ func main() {
 		}
 	}()
 	fmt.Println("prince:", price)
+
+	// ------案例二
+
+	// 优化前：
+	price = func() int32 {
+		basePrice := item.Quality * item.Price
+		var discountFactor int32
+		if basePrice > 15 {
+			discountFactor = 2
+		} else {
+			discountFactor = 3
+		}
+		return basePrice * discountFactor
+	}()
+
+	// 优化后：
+	// 步骤一：
+	price = func() int32 {
+		var discountFactor int32
+		if item.getPrice() > 15 {
+			discountFactor = 2
+		} else {
+			discountFactor = 3
+		}
+		return item.getPrice() * discountFactor
+	}()
+
+	// 步骤二：
+	price = func() int32 {
+		return item.getPrice() * item.getDiscountFactor()
+	}()
+
 }
 
 type Item struct {
@@ -43,4 +75,12 @@ type Item struct {
 
 func (i *Item) getPrice() int32 {
 	return i.Quality * i.Price
+}
+
+func (i *Item) getDiscountFactor() int32 {
+	if i.getPrice() > 15 {
+		return 2
+	} else {
+		return 3
+	}
 }
