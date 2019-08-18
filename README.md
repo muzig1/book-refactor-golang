@@ -28,7 +28,7 @@ git clone https://github.com/nxlsBoy/book-refactor-golang.git
 - [] chapter_3
 - [] chapter_4
 - [x] chapter_5:2019年08月12日22:58:32
-- [] chapter_6
+- [x] chapter_6:2019年08月18日13:26:59
 - [] chapter_7
 - [] chapter_8
 - [] chapter_9
