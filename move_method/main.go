@@ -30,22 +30,22 @@ type (
 	AccountType string
 )
 
-func (a *Account) overdraftCharge() float32 {
-	if a.Type == AccountTypePremium {
+func (a AccountType) overdraftCharge(daysOverdrawn int) float32 {
+	if a == AccountTypePremium {
 		result := float32(10)
-		if a.DaysOverdrawn > 7 {
-			result += (float32(a.DaysOverdrawn) - 7) * 0.85
+		if daysOverdrawn > 7 {
+			result += (float32(daysOverdrawn) - 7) * 0.85
 		}
 		return result
 	} else {
-		return float32(a.DaysOverdrawn) * 1.75
+		return float32(daysOverdrawn) * 1.75
 	}
 }
 
 func (a *Account) BankCharge() float32 {
 	result := float32(4.5)
 	if a.DaysOverdrawn > 0 {
-		result += a.overdraftCharge()
+		result += a.Type.overdraftCharge(a.DaysOverdrawn)
 	}
 	return result
 }
