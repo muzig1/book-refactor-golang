@@ -11,24 +11,29 @@ import "fmt"
 
 func main() {
 	acc := new(Account)
-	acc.InterestRate = 0.8
-	acc.Type = AccountType{Type: "vip"}
-
+	acc.Type = AccountType{
+		Type:         "vip",
+		InterestRate: 0.8,
+	}
 	money := acc.InterestForAmount(1*1e5, 100)
 	fmt.Println(money)
 }
 
 type (
 	Account struct {
-		Type         AccountType
-		InterestRate float32
+		Type AccountType
 	}
 
 	AccountType struct {
-		Type string
+		Type         string
+		InterestRate float32
 	}
 )
 
-func (a *Account) InterestForAmount(amount float32, days int) float32 {
-	return a.InterestRate * amount * float32(days) / 365
+func (at *Account) InterestForAmount(amount float32, days int) float32 {
+	return at.Type.interestForAmount(amount, days)
+}
+
+func (at *AccountType) interestForAmount(amount float32, days int) float32 {
+	return at.InterestRate * amount * float32(days) / 365
 }
