@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 /*
 手法：Hide Delegate - 隐藏代理
 
@@ -8,16 +10,31 @@ package main
 */
 
 func main() {
+	p := NewPerson("xiaoming", "xiaohua", "golang")
+	managerName := p.GetManagerDelegate()
+	fmt.Println("manager name:", managerName)
+}
 
+func NewPerson(name, mName, departName string) *Person {
+	depart := Department{
+		Name:    departName,
+		Manager: mName,
+	}
+	return &Person{
+		Name:               name,
+		Depart:             depart,
+		GetManagerDelegate: depart.GetManager,
+	}
 }
 
 type Person struct {
-	Name   string
-	Depart Department
+	Name               string
+	Depart             Department
+	GetManagerDelegate func() string
 }
 
 func (p *Person) GetManager() string {
-	return p.Depart.GetManager()
+	return p.GetManagerDelegate()
 }
 
 type Department struct {
