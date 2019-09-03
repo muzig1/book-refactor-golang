@@ -31,9 +31,9 @@ type (
 )
 
 func (at *Account) InterestForAmount(amount float32, days int) float32 {
-	return at.Type.interestForAmount(amount, days)
+	return at.Type.interestForAmount() * amount * float32(days) / 365
 }
 
-func (at *AccountType) interestForAmount(amount float32, days int) float32 {
-	return at.InterestRate * amount * float32(days) / 365
+func (at *AccountType) interestForAmount() float32 {
+	return at.InterestRate
 }
