@@ -17,10 +17,14 @@ type Person struct {
 }
 
 func (p *Person) GetManager() string {
-	return p.Depart.Manager
+	return p.Depart.GetManager()
 }
 
 type Department struct {
 	Name    string
 	Manager string
+}
+
+func (d *Department) GetManager() string {
+	return d.Manager
 }
