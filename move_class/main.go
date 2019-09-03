@@ -12,6 +12,10 @@ func main() {
 }
 
 type Person struct {
-	Name                         string
+	Name string
+	PersonOffice
+}
+
+type PersonOffice struct {
 	OfficeAreaCode, OfficeNumber string
 }
