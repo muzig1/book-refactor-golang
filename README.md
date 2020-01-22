@@ -49,20 +49,20 @@ git clone --depth=1 https://github.com/nxlsBoy/book-refactor-golang.git
 
 针对函数调用的优化
 
-| Patern                                  | Expression           | Prograss |
-| :-------------------------------------- | :------------------- | :------- |
-| Rename Method                           | 修改函数名           | ✘        |
-| Add Parameter                           | 添加参数             | ✘        |
-| Remove Parameter                        | 移除参数             | ✘        |
-| Separate Query from Modifier            | 查询与修改函数独立   | ✘        |
-| Parameterize Method                     | 让函数携带参数       | ✘        |
-| Replace Parameter with Explicit Methods | 以明确函数取代参数   | ✘        |
-| Preserve Whole Object                   | 保持对象完整         | ✘        |
-| Replace Parameter with Methods          | 以函数取代参数       | ✘        |
-| Introduce Paramter Object               | 引入参数对象         | ✘        |
-| Remove Setting Method                   | 溢出设置值函数       | ✘        |
-| Hide Method                             | 隐藏函数             | ✘        |
-| Replace Constructor with Factory Method | 工厂函数取代构造函数 | ✘        |
-| Encapsulate Downcast                    | 封装向下转型         | ✘        |
-| Replace Error Code with Exception       | 以异常取代错误骂     | ✘        |
-| Replace Exception with Test             | 以测试取代异常       | ✘        |
+| Patern                                             | Expression           | Prograss |
+| :------------------------------------------------- | :------------------- | :------- |
+| [Rename Method](chapter10/rename_method/README.md) | 修改函数名           | ✔        |
+| Add Parameter                                      | 添加参数             | ✘        |
+| Remove Parameter                                   | 移除参数             | ✘        |
+| Separate Query from Modifier                       | 查询与修改函数独立   | ✘        |
+| Parameterize Method                                | 让函数携带参数       | ✘        |
+| Replace Parameter with Explicit Methods            | 以明确函数取代参数   | ✘        |
+| Preserve Whole Object                              | 保持对象完整         | ✘        |
+| Replace Parameter with Methods                     | 以函数取代参数       | ✘        |
+| Introduce Paramter Object                          | 引入参数对象         | ✘        |
+| Remove Setting Method                              | 溢出设置值函数       | ✘        |
+| Hide Method                                        | 隐藏函数             | ✘        |
+| Replace Constructor with Factory Method            | 工厂函数取代构造函数 | ✘        |
+| Encapsulate Downcast                               | 封装向下转型         | ✘        |
+| Replace Error Code with Exception                  | 以异常取代错误骂     | ✘        |
+| Replace Exception with Test                        | 以测试取代异常       | ✘        |
